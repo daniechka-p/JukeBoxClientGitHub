@@ -12,29 +12,29 @@ import java.net.*;
 
 public class BeatBoxFinal {  // implements MetaEventListener
 
-    JPanel mainPanel;
-    JList incomingList;
-    JTextField userMessage;
-    ArrayList<JCheckBox> checkboxList;
-    int nextNum;
-    ObjectInputStream in;
-    ObjectOutputStream out;
-    Vector<String> listVector = new Vector<String>();
-    String userName ;
-    HashMap<String, boolean[]> otherSeqsMap = new HashMap<String, boolean[]>();
-    Sequencer sequencer;
-    Sequence sequence;
-    Track track;
-    JFrame theFrame;
+    private JPanel mainPanel;
+    private JList incomingList;
+    private JTextField userMessage;
+    private ArrayList<JCheckBox> checkboxList;
+    private int nextNum;
+    private ObjectInputStream in;
+    private ObjectOutputStream out;
+    private Vector<String> listVector = new Vector<String>();
+    private String userName ;
+    private HashMap<String, boolean[]> otherSeqsMap = new HashMap<String, boolean[]>();
+    private Sequencer sequencer;
+    private Sequence sequence;
+    private Track track;
+    private JFrame theFrame;
 
-    String[] instrumentNames = {"Bass Drum", "Closed Hi-Hat",
+    private String[] instrumentNames = {"Bass Drum", "Closed Hi-Hat",
             "Open Hi-Hat","Acoustic Snare", "Crash Cymbal", "Hand Clap",
             "High Tom", "Hi Bongo", "Maracas", "Whistle", "Low Conga",
             "Cowbell", "Vibraslap", "Low-mid Tom", "High Agogo",
             "Open Hi Conga"};
-    int[] instruments = {35,42,46,38,49,39,50,60,70,72,64,56,58,47,67,63};
+    private int[] instruments = {35,42,46,38,49,39,50,60,70,72,64,56,58,47,67,63};
 
-    public void startUp(String name) {
+    void startUp(String name) {
         userName = name;
         try {
             Socket sock = new Socket("127.0.0.1", 4242);
@@ -50,7 +50,7 @@ public class BeatBoxFinal {  // implements MetaEventListener
         buildGUI();
     }
 
-    public void buildGUI() {
+    private void buildGUI() {
         theFrame = new JFrame("Cyber BeatBox");
         theFrame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         BorderLayout layout = new BorderLayout();
@@ -135,7 +135,7 @@ public class BeatBoxFinal {  // implements MetaEventListener
         theFrame.pack();
         theFrame.setVisible(true);
     }
-    public void setUpMidi() {
+    private void setUpMidi() {
         try {
             sequencer = MidiSystem.getSequencer();
             sequencer.open();
@@ -146,7 +146,7 @@ public class BeatBoxFinal {  // implements MetaEventListener
 
         } catch(Exception e) {e.printStackTrace();}
     }
-    public void buildTrackAndStart() {
+    private void buildTrackAndStart() {
         // this will hold the instruments for each vertical column,
         // in other words, each tick (may have multiple instruments)
         ArrayList<Integer> trackList = null;
@@ -180,7 +180,8 @@ public class BeatBoxFinal {  // implements MetaEventListener
             e.printStackTrace();
         }
     }
-    public class MySendListener implements ActionListener {    // new - save
+
+    private class MySendListener implements ActionListener {    // new - save
         public void actionPerformed(ActionEvent a) {
             // make an arraylist of just the STATE of the checkboxes
             boolean[] checkboxState = new boolean[256];
@@ -199,13 +200,15 @@ public class BeatBoxFinal {  // implements MetaEventListener
             }
         }
     }
-    public class MySaveListener implements ActionListener {
+
+    private class MySaveListener implements ActionListener {
         @Override
         public void actionPerformed(ActionEvent e) {
             //todo
         }
     }
-    public class MyListSelectionListener implements ListSelectionListener {
+
+    private class MyListSelectionListener implements ListSelectionListener {
         public void valueChanged(ListSelectionEvent le) {
             if (!le.getValueIsAdjusting()) {
                 String selected = (String) incomingList.getSelectedValue();
@@ -218,7 +221,8 @@ public class BeatBoxFinal {  // implements MetaEventListener
             }
         }
     }
-    public class RemoteReader implements Runnable {
+
+    private class RemoteReader implements Runnable {
         boolean[] checkboxState = null;
         //String nameToShow = null;
         Object obj = null;
@@ -238,7 +242,7 @@ public class BeatBoxFinal {  // implements MetaEventListener
             }
         }
     }
-    public void changeSequence(boolean[] checkboxState) {
+    private void changeSequence(boolean[] checkboxState) {
         for (int i = 0; i < 256; i++) {
             JCheckBox check = checkboxList.get(i);
             if (checkboxState[i]) {
@@ -249,7 +253,7 @@ public class BeatBoxFinal {  // implements MetaEventListener
             }
         }
     }
-    public void makeTracks(ArrayList<Integer> list) {
+    private void makeTracks(ArrayList<Integer> list) {
         Iterator it = list.iterator();
         for (int i = 0; i < 16; i++) {
             Integer num = (Integer) it.next();
@@ -260,14 +264,16 @@ public class BeatBoxFinal {  // implements MetaEventListener
             }
         }
     }
-    public  MidiEvent makeEvent(int comd, int chan, int one, int two, int tick) {
+    private MidiEvent makeEvent(int comd, int chan, int one, int two, int tick) {
         MidiEvent event = null;
         try {
             ShortMessage a = new ShortMessage();
             a.setMessage(comd, chan, one, two);
             event = new MidiEvent(a, tick);
 
-        }catch(Exception e) { }
+        }catch(Exception e) {
+            e.printStackTrace();
+        }
         return event;
     }
 }
